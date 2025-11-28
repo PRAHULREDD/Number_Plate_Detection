@@ -1,0 +1,8 @@
+ultralytics
+opencv-python
+requests
+fastapi
+uvicorn
+numpy
+pydantic
+python-dotenv
