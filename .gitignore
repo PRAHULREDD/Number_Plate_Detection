@@ -51,7 +51,10 @@ car_detection.log
 *.avi
 *.mov
 *.mkv
-Videos/
+Videos/*.mp4
+Videos/*.avi
+Videos/*.mov
+Videos/*.mkv
 
 # Generated images
 car_crossing_images/
