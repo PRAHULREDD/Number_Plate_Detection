@@ -34,9 +34,11 @@ class CarDetector:
     def __init__(self):
         self.model = None
         self.crossed_cars = {}
+        self.processed_cars = set()  # Track cars that already had images taken
         self.last_detections = []
         self.car_counter = 0
         self.tracked_cars = {}
+        self.id_mapping = {}  # Map unstable IDs to stable sequential IDs
         
         # Load settings from centralized config
         config = get_env_config()
@@ -72,7 +74,14 @@ class CarDetector:
         if self.model is None:
             return []
             
-        results = self.model.track(source=frame, imgsz=self.yolo_image_size, conf=self.confidence_threshold, verbose=self.verbose, tracker="bytetrack.yaml")
+        results = self.model.track(
+            source=frame, 
+            imgsz=self.yolo_image_size, 
+            conf=self.confidence_threshold, 
+            verbose=self.verbose,
+            tracker="bytetrack.yaml",
+            persist=True
+        )
         detections = []
         
         for result in results:
@@ -95,9 +104,7 @@ class CarDetector:
         crossings = []
         current_time = timestamp
         
-        # Clean old entries
-        self.crossed_cars = {k: v for k, v in self.crossed_cars.items() 
-                           if current_time - v < self.duplicate_prevention_time}
+        # No need to clean entries - each car ID processed only once
         
         # Get cars with IDs
         cars_with_ids = self.assign_car_ids(detections)
@@ -105,9 +112,9 @@ class CarDetector:
         for x1, y1, x2, y2, conf, car_id, centroid_x, centroid_y in cars_with_ids:
             # Check if car's centroid crossed the line
             if centroid_y >= line_y:
-                # Check if this car hasn't crossed recently
-                if car_id not in self.crossed_cars:
-                    self.crossed_cars[car_id] = current_time
+                # Check if this car hasn't been processed before
+                if car_id not in self.processed_cars:
+                    self.processed_cars.add(car_id)
                     crossings.append((x1, y1, x2, y2, conf, timestamp, car_id))
                     
                     if self.verbose:
@@ -123,10 +130,14 @@ class CarDetector:
             centroid_x = (x1 + x2) // 2
             centroid_y = (y1 + y2) // 2
             
-            # Use ByteTracker ID or fallback to manual tracking
+            # Create stable sequential ID mapping
             if track_id is not None:
-                car_id = track_id
+                if track_id not in self.id_mapping:
+                    self.car_counter += 1
+                    self.id_mapping[track_id] = self.car_counter
+                car_id = self.id_mapping[track_id]
             else:
+                # Fallback to manual tracking
                 car_id = None
                 min_distance = float('inf')
                 

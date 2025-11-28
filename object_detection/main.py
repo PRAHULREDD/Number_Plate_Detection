@@ -17,7 +17,7 @@ def get_main_config():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
     config = {
-        'video_path': os.getenv('VIDEO_PATH', r"C:\Users\rr001\Downloads\car_detection\test_video.mp4"),
+        'video_path': os.getenv('VIDEO_PATH', 'Videos/test_video_1.mp4'),
         'model_path': os.getenv('MODEL_PATH', 'yolo11n.pt'),
         'log_file': os.getenv('LOG_FILE', 'car_detection.log'),
         'log_level': os.getenv('LOG_LEVEL', 'INFO'),

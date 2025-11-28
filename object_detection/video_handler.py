@@ -10,7 +10,7 @@ load_dotenv()
 def get_video_config():
     """Get video-specific configuration"""
     return {
-        'video_path': os.getenv('VIDEO_PATH', r"C:\Users\rr001\Downloads\car_detection\test_video.mp4"),
+        'video_path': os.getenv('VIDEO_PATH', 'Videos/test_video_1.mp4'),
         'detection_line_position': float(os.getenv('DETECTION_LINE_POSITION', 0.8)),
         'process_every_n_frames': int(os.getenv('PROCESS_EVERY_N_FRAMES', 2)),
         'video_display_delay': int(os.getenv('VIDEO_DISPLAY_DELAY', 30)),
@@ -84,8 +84,11 @@ class VideoHandler:
                     # Crop from original clean frame (no bboxes/lines)
                     cropped_car = self.detector.crop_car(original_frame, x1, y1, x2, y2)
                     
-                    # Send clean cropped car image with car ID
-                    self.api_client.send_crossing_image(cropped_car, ts, car_id)
+                    # Only send if crop meets quality requirements
+                    if cropped_car is not None:
+                        self.api_client.send_crossing_image(cropped_car, ts, car_id)
+                    else:
+                        logging.info(f"Car {car_id} rejected - image too small")
             
             # Draw detections on display frame only
             frame = self.detector.draw_detections(frame, self.detector.last_detections, line_y)

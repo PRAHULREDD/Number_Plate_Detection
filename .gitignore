@@ -25,6 +25,7 @@ venv/
 env/
 ENV/
 .venv/
+myenv/
 
 # IDE
 .vscode/
@@ -40,22 +41,23 @@ Thumbs.db
 *.log
 car_detection.log
 
-# Model files (optional - uncomment if models are large)
-# *.pt
-# *.pth
-# *.onnx
+# Model files
+*.pt
+*.pth
+*.onnx
 
 # Video files
 *.mp4
 *.avi
 *.mov
 *.mkv
+Videos/
 
-# Images (optional - uncomment if you don't want to track saved images)
-# car_crossing_images/
-# *.jpg
-# *.jpeg
-# *.png
+# Generated images
+car_crossing_images/
+*.jpg
+*.jpeg
+*.png
 
 # Environment variables
 .env
