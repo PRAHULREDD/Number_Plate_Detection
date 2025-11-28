@@ -57,20 +57,50 @@ python main.py
 Edit `.env` file to customize settings:
 
 ```env
+# Car Detection System Environment Variables
+
 # Video Configuration
-VIDEO_PATH=Videos\your_video.mp4
+VIDEO_PATH=Videos\Traffic Control CCTV.mp4
 MODEL_PATH=models/yolo11n.pt
 MODEL_NUMBER_PLATE_PATH=models\License_Plate_L1.pt
+# API Configuration
+FASTAPI_HOST=127.0.0.1
+FASTAPI_PORT=8000
+FASTAPI_URL=http://localhost:8000/car-crossing
 
 # Detection Settings
-DETECTION_LINE_POSITION=0.8        # Line position (80% from top)
-CONFIDENCE_THRESHOLD=0.4           # Car detection confidence
-LP_CONFIDENCE_THRESHOLD=0.5        # License plate confidence
-MIN_CAR_HEIGHT=500                 # Minimum car height for processing
+DETECTION_LINE_POSITION=0.8
+CONFIDENCE_THRESHOLD=0.4
+PROCESS_EVERY_N_FRAMES=2
+DUPLICATE_PREVENTION_TIME=2.0
+MAX_TRACKED_CARS=30
+CENTROID_DISTANCE_THRESHOLD=100
+MIN_CROSSING_DISTANCE=50
+CROP_PADDING=20
+
+# Performance Settings
+YOLO_IMAGE_SIZE=640
+VIDEO_DISPLAY_DELAY=30
+
+# Storage Settings
+IMAGES_FOLDER=car_crossing_images
+LOG_FILE=car_detection.log
+LOG_LEVEL=INFO
+
+# Development Settings
+DEBUG=False
+VERBOSE=False
+
+# License Plate Detection
+LP_CONFIDENCE_THRESHOLD=0.5
+MIN_CAR_HEIGHT=500
 
 # ByteTracker Settings
-TRACK_HIGH_THRESH=0.5              # High confidence threshold
-TRACK_LOW_THRESH=0.1               # Low confidence threshold
+TRACK_HIGH_THRESH=0.5
+TRACK_LOW_THRESH=0.1
+NEW_TRACK_THRESH=0.6
+TRACK_BUFFER=30
+MATCH_THRESH=0.8
 ```
 
 ## 🎯 Features
